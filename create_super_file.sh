@@ -121,8 +121,15 @@ while read -r FILE; do
     REL=${FILE#./}
     DISK_SIZE=$(get_file_size "$FILE")
     
-    mkdir -p "$REF_DIR_NAME/$(dirname "$REL")"
-    ln -sf "$TARGET_ROOT/$REL" "$REF_DIR_NAME/$REL"
+    # Определяем имя для ссылки (добавляем .txt)
+    REF_FILE_NAME="$REF_DIR_NAME/${REL}.txt"
+    
+    # Создаем папку, если её нет
+    mkdir -p "$(dirname "$REF_FILE_NAME")"
+    
+    # Создаем ЖЕСТКУЮ ссылку (Hard Link)
+    # Если файл уже есть, -f заставит его пересоздать
+    ln -f "$TARGET_ROOT/$REL" "$REF_FILE_NAME"
 
     # Анализ начала кода
     FCL=$(awk '
