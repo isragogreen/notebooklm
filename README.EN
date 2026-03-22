@@ -27,7 +27,6 @@ Place `create_super_file.sh` in your project root:
 ```bash
 chmod +x create_super_file.sh
 ```
-
 ### 2. Running
 ```bash
 ./create_super_file.sh --clean --max_size 20000
@@ -35,14 +34,10 @@ or
 ./create_super_file.sh --clean 
 or
 ./create_super_file.sh --clean --part_size 1000000 --json_limit 5000 --max_size 40000
-
 ```
-
 ## 🛠 System Requirements
 *  Linux (Ubuntu/Debian):  Works out of the box (uses standard `awk`).
 *  macOS:  Recommended to have `coreutils` installed via Homebrew.
-
----
 
 # 📦 Context Packer для NotebookLM и ИИ
 
@@ -90,11 +85,5 @@ or
 *  Ubuntu/Debian:  Работает сразу (использует стандартный `awk`).
 *  macOS:  Желательно наличие `coreutils` (через `brew install`).
 
----
-
 ### 📜 License / Лицензия
  MIT.  Свободно для использования, модификации и распространения.
-
----
-
- Подсказать, как добавить в README таблицу с примерами того, как нейросеть лучше понимает проект после такой обработки? 
