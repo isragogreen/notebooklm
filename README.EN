@@ -1,102 +1,100 @@
-# [EN] English Version
 # 📦 Context Packer for NotebookLM & LLMs
-Context Packer is a high-performance bash utility designed to transform massive, complex local codebases into a clean, secure, and AI-friendly format. It is specifically optimized for Google NotebookLM, Claude, and ChatGPT.
+
+ [EN] English Version 
+Context Packer is a high-performance bash utility designed to transform massive, complex local codebases into a clean, secure, and AI-friendly format. It is specifically optimized for  Google NotebookLM ,  Claude , and  ChatGPT .
 ## 😫 The Problem: "Context Fatigue"
-When working with AI and large projects, developers face four major hurdles:
-1. Context Limits: Projects are too large to copy-paste, and uploading hundreds of files manually is exhausting.
-2. Unsupported Formats: NotebookLM and other tools often refuse to "read" or index `.jsx`, `.tsx`, `.py`, or `.scss` files.
-3. Security Leaks: Accidentally uploading a `.env` file with live production keys or database passwords.
-4. Noise & Junk: AI gets confused by `.old` files, build artifacts, and massive `node_modules`.
+1.  Context Limits:  Projects are too large to copy-paste.
+2.  Unsupported Formats:  NotebookLM often refuses to index `.jsx`, `.tsx`, or `.py` files.
+3.  Security Leaks:  Risk of uploading `.env` files with production keys.
+4.  Noise & Junk:  AI gets confused by `node_modules`, `.git`, and build artifacts.
 
-## ✨ Key Features & "Magic"
-### 1. 🔗 Live Mirroring (The `ref/` Folder)
-The script creates a parallel directory structure in the `ref/` folder. 
-* Automatic Extension Fix: Every file (e.g., `App.jsx`) is mirrored as a `.txt` file (e.g., `App.jsx.txt`). This allows NotebookLM to instantly "see" and index your code.
-* Symbolic Link Logic: By using symlinks, the files in `ref/` are not just copies. If you or an AI agent edits `ref/src/App.jsx.txt`, the changes are  instantly applied  to your actual source code.
+## ✨ Key Features
+### 1. 🔗 Smart Mirroring (The `ref/` Folder)
+*  Extension Fix:  Every file (e.g., `App.jsx`) is symlinked as `App.jsx.txt`. This allows NotebookLM to instantly index your code.
+*  Live Sync:  Edits in `ref/` are instantly applied to your actual source code via symbolic links.
 
-### 2. 🛡️ Non-Destructive Security (.env Redaction)
-Your original files are  NEVER  modified on your hard drive. 
-* The script reads your `.env` and masks sensitive data (passwords, tokens) using `sed`  only in the output buffer .
-* In the final "Super-File," the AI sees `DB_PASSWORD=    (HIDDEN)`. Your local environment remains 100% safe.
+### 2. 🛡️ Zero-Config Security
+*  Masking:  Sensitive data in `.env` is masked (`DB_PASSWORD=    (HIDDEN)`) in the output buffer. Your local files remain  untouched .
+*  Filter:  Automatically ignores `node_modules`, `.git`, `.lock`, and `.old` files.
 
-### 3. ✂️ Intelligent Truncation & Filtering
-*  Noise Filter:  Automatically excludes `.old`, `.lock`, `certs/`, `.git/`, and `node_modules/`.
-*  Smart Limits:  To prevent a single massive JSON or CSS file from eating your entire context window, the script truncates large files to a configurable limit (default: 12KB for code, 4KB for JSON).
-
-### 4. 📂 Structured "Super-Files"
-The script merges your project into `project_part_N.txt` files. Each file includes:
-* A clear  File Tree  header.
-* Explicit  Path Separators  (e.g., `FILE: src/main.js`).
-* This allows the LLM to understand exactly where each piece of code lives in your architecture.
+### 3. ✂️ Byte-Precise Truncation
+*  Budget Control:  Prevents massive files from eating your context window. 
+*  Metadata Preservation:  Keeps file headers (comments/descriptions) while truncating the body if it exceeds limits (default: 12KB for code, 4KB for JSON).
 
 ## 🚀 Usage
 ### 1. Installation
-Place `create_super_file.sh` in your project root and give it permissions:
+Place `create_super_file.sh` in your project root:
+```bash
 chmod +x create_super_file.sh
+```
 
 ### 2. Running
 ```bash
-./create_super_file.sh --clean
+./create_super_file.sh --clean --max_size 20000
+or
+./create_super_file.sh --clean 
+or
+./create_super_file.sh --clean --part_size 1000000 --json_limit 5000 --max_size 40000
+
 ```
-## 🛠 Command Line Options (Help)
 
- `--clean`        Deletes the `ref/` folder and old parts before starting. Highly recommended for a fresh state.  `false` 
- `--part_size`    The maximum size (in bytes) of each output `project_part_N.txt`.  `980,000` 
- `--max_size`     The maximum size (in bytes) allowed for a single source code file.  `12,000` 
- `--json_limit`   The maximum size (in bytes) allowed for `.json` files.  `4,000` 
-
-
-# [RU] Русская версия
-# 📦 Context Packer для NotebookLM и ИИ
-Context Packer — это высокопроизводительная bash-утилита, предназначенная для преобразования огромных и сложных локальных проектов в чистый, безопасный и понятный для ИИ формат. Оптимизировано для Google NotebookLM, Claude и ChatGPT.
-
-## 😫 Проблема: «Усталость контекста»
-При работе с ИИ в больших проектах разработчики сталкиваются с четырьмя преградами:
-1.  Лимиты контекста:  Проекты слишком велики для копирования, а загрузка сотен файлов вручную неэффективна.
-2.  Неподдерживаемые форматы:  NotebookLM часто отказывается «читать» или индексировать файлы `.jsx`, `.tsx`, `.py` или `.scss`.
-3.  Утечки безопасности:  Риск случайно загрузить файл `.env` с реальными ключами или паролями.
-4.  Шум и мусор:  ИИ путается в файлах `.old`, логах и огромных папках `node_modules`.
+## 🛠 System Requirements
+*  Linux (Ubuntu/Debian):  Works out of the box (uses standard `awk`).
+*  macOS:  Recommended to have `coreutils` installed via Homebrew.
 
 ---
 
-## ✨ Ключевые фишки и «Магия»
+# 📦 Context Packer для NotebookLM и ИИ
 
-### 1. 🔗 Живое зеркалирование (Папка `ref/`)
-Скрипт создает параллельную структуру директорий в папке `ref/`.
-*  Исправление расширений:  Каждый файл (например, `App.jsx`) зеркалируется как `.txt` (например, `App.jsx.txt`). Это позволяет NotebookLM мгновенно «видеть» и индексировать ваш код.
-*  Логика символических ссылок:  Благодаря использованию `ln -s`, файлы в `ref/` — это не просто копии. Если вы (или ваш ИИ-агент) отредактируете `ref/src/App.jsx.txt`, изменения  мгновенно применятся  к вашему реальному исходному коду.
+ [RU] Русская версия 
 
-### 2. 🛡️ Безопасность без повреждений (Маскировка .env)
-Ваши оригинальные файлы на диске  НИКОГДА  не изменяются.
-* Скрипт считывает `.env` и маскирует секретные данные (пароли, токены) с помощью `sed`  только в выходном буфере .
-* В итоговом «Супер-файле» ИИ увидит `DB_PASSWORD=    (HIDDEN)`. Ваш локальный конфиг остается на 100% защищенным.
+Context Packer — это высокопроизводительная bash-утилита для преобразования сложных локальных проектов в чистый и безопасный формат, оптимизированный для  Google NotebookLM ,  Claude  и  ChatGPT .
 
-### 3. ✂️ Умная обрезка и фильтрация
-*  Фильтр мусора:  Автоматически исключает файлы `.old`, `.lock`, папки `certs/`, `.git/` и `node_modules/`.
-*  Умные лимиты:  Чтобы один огромный JSON или CSS не «съел» всё окно контекста, скрипт обрезает тяжелые файлы до настраиваемого лимита (по умолчанию: 12 КБ для кода, 4 КБ для JSON).
+## 😫 Проблема: «Усталость контекста»
+1.  Лимиты:  Проекты слишком велики для ручного копирования.
+2.  Форматы:  NotebookLM часто игнорирует файлы `.jsx`, `.tsx`, `.py` или `.scss`.
+3.  Безопасность:  Риск утечки ключей из `.env`.
+4.  Шум:  Лишние файлы (`node_modules`, `.git`) путают нейросеть.
 
-### 4. 📂 Структурированные «Супер-файлы»
-Скрипт склеивает проект в файлы `project_part_N.txt`. Каждый файл включает:
-* Четкий заголовок с  деревом файлов .
-* Понятные  разделители путей  (например, `FILE: src/main.js`).
-* Это позволяет нейросети точно понимать архитектуру вашего проекта.
+## ✨ Ключевые фишки
+
+### 1. 🔗 Умное зеркалирование (Папка `ref/`)
+*  Исправление расширений:  Файлы (напр. `App.jsx`) зеркалируются как `App.jsx.txt`. Это заставляет NotebookLM "видеть" ваш код.
+*  Живая связь:  Благодаря симлинкам (`ln -s`), правки в папке `ref/` мгновенно применяются к вашим исходникам.
+
+### 2. 🛡️ Безопасность и фильтрация
+*  Маскировка:  Данные в `.env` заменяются на `    (HIDDEN)` только в итоговом файле. Оригиналы  не изменяются .
+*  Игнорирование:  Скрипт автоматически пропускает мусор: `node_modules`, `.git`, `.lock`, `.old`.
+
+### 3. ✂️ Точная обрезка (Byte-Precise)
+*  Контроль бюджета:  Чтобы один огромный JSON не «съел» всё окно контекста, скрипт обрезает тело файла, сохраняя важные заголовки и описания.
+*  Лимиты:  Настраиваемые пороги (по умолчанию 12 КБ для кода и 4 КБ для JSON).
 
 ## 🚀 Запуск
 ### 1. Подготовка
-Положите `create_super_file.sh` в корень проекта и дайте права:
+Положите скрипт в корень проекта и дайте права:
 ```bash
 chmod +x create_super_file.sh
 ```
+
 ### 2. Выполнение
 ```bash
-./create_super_file.sh --clean
+./create_super_file.sh --clean --max_size 20000
+or
+./create_super_file.sh --clean 
+or
+./create_super_file.sh --clean --part_size 1000000 --json_limit 5000 --max_size 40000
 ```
-## 🛠 Опции командной строки (Help)
 
-  `--clean`       Удаляет папку `ref/` и старые части перед стартом. Рекомендуется для «чистой» сборки.   `false`  
-  `--part_size`   Максимальный размер (в байтах) каждой части `project_part_N.txt`.   `980,000`  
-  `--max_size`    Максимальный размер (в байтах) одного файла исходного кода.   `12,000`  
-  `--json_limit`  Максимальный размер (в байтах) для файлов `.json`.   `4,000`  
+## 🛠 Системные требования
+*  Ubuntu/Debian:  Работает сразу (использует стандартный `awk`).
+*  macOS:  Желательно наличие `coreutils` (через `brew install`).
+
+---
 
 ### 📜 License / Лицензия
- MIT.  Free to use, modify, and share.
+ MIT.  Свободно для использования, модификации и распространения.
+
+---
+
+ Подсказать, как добавить в README таблицу с примерами того, как нейросеть лучше понимает проект после такой обработки? 
